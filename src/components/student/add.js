@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 import firebase from '../../config/firebase.config';
 
 export class StudentAddForm extends Component{
@@ -7,14 +7,37 @@ export class StudentAddForm extends Component{
     constructor(props){
         super(props);
         this.state = {
-                name:'',
-                email:'',
-                contactNumber:'',
-                address:'',
-                class:''
+            name:'',
+            email:'',
+            contactNumber:'',
+            address:'',
+            class:'',
+            rollNumber:''
         };
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        console.log(this.props.history);
+    }
+
+    componentDidMount(){
+        let self = this;
+        let id = this.props.match.params.id;
+        if(id){
+            let student = firebase.database().ref('students').child('/'+id);
+            if(student){
+                student.on('value', snap => {
+                    let student = snap.val();
+                    self.setState({
+                        name: student.name,
+                        class: student.class,
+                        contactNumber: student.contactNumber,
+                        address: student.address,
+                        email: student.email,
+                        rollNumber:student.rollNumber
+                    })
+                });
+            }
+        }
     }
 
     handleInputChange(event){
@@ -26,8 +49,28 @@ export class StudentAddForm extends Component{
 
     handleSubmit(event){
         event.preventDefault();
-        let db = firebase.database().ref('students');
-        db.push(this.state);
+        let self = this;
+        let id = this.props.match.params.id;
+        let db = null;
+        if(id) {
+            let student = firebase.database().ref('students').child('/' + id);
+            if (student) {
+                student.set(self.state);
+                NotificationManager.success('Student Updated.');
+            }
+        }   else    {
+            db = firebase.database().ref('students');
+            db.push(this.state);
+            NotificationManager.success('Student added.');
+        }
+        this.state = {
+            name:'',
+            email:'',
+            contactNumber:'',
+            address:'',
+            class:''
+        };
+        this.props.history.push('/students/list');
     }
 
 
@@ -58,6 +101,7 @@ export class StudentAddForm extends Component{
                                            name="name"
                                            id="name"
                                            placeholder="Student name"
+                                           required
                                            type="text" />
                                 </div>
                             </div>
@@ -69,7 +113,8 @@ export class StudentAddForm extends Component{
                                            value={this.state.class}
                                            name="class"
                                            id="class"
-                                           placeholder="Email"
+                                           placeholder="Class"
+                                           required
                                            type="text" />
                                 </div>
                             </div>
@@ -82,6 +127,7 @@ export class StudentAddForm extends Component{
                                            name="rollNumber"
                                            id="rollNumber"
                                            placeholder="Roll number"
+                                           required
                                            type="text" />
                                 </div>
                             </div>
@@ -94,6 +140,7 @@ export class StudentAddForm extends Component{
                                            name="address"
                                            id="address"
                                            placeholder="Student address"
+                                           required
                                            type="address" />
                                 </div>
                             </div>
@@ -106,6 +153,7 @@ export class StudentAddForm extends Component{
                                            name="contactNumber"
                                            id="contactNumber"
                                            placeholder="Contact number"
+                                           required
                                            type="text" />
                                 </div>
                             </div>
@@ -119,6 +167,7 @@ export class StudentAddForm extends Component{
                                            name="email"
                                            id="inputEmail3"
                                            placeholder="Email"
+                                           required
                                            type="email" />
                                 </div>
                             </div>
@@ -128,6 +177,7 @@ export class StudentAddForm extends Component{
                         </div>
                     </form>
                 </div>
+                <NotificationContainer />
             </div>
 
         );

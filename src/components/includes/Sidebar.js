@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 export class Sidebar extends Component{
 
@@ -16,18 +17,19 @@ export class Sidebar extends Component{
                         </div>
                     </div>
                     <ul className="sidebar-menu" data-widget="tree">
-                        <li className="header">MAIN NAVIGATION</li>
-                        <li className="active treeview">
-                            <a href="#">
-                                <i className="fa fa-dashboard"></i> <span>Dashboard</span>
+                        <li>
+                            <Link to="/students/list">
+                                <i className="fa fa-dashboard"></i> <span>Student list</span>
                                 <span className="pull-right-container">
-                                    <i className="fa fa-angle-left pull-right"></i>
+                            </span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/">
+                                <i className="fa fa-dashboard"></i> <span>Student add</span>
+                                <span className="pull-right-container">
                                 </span>
-                            </a>
-                            <ul className="treeview-menu">
-                                <li className="active"><a href="index.html"><i className="fa fa-circle-o"></i> Dashboard v1</a></li>
-                                <li><a href="#"><i className="fa fa-circle-o"></i> Dashboard v2</a></li>
-                            </ul>
+                            </Link>
                         </li>
                     </ul>
                 </section>
